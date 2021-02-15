@@ -33,39 +33,22 @@ class BoardAdapter(private val aContext: Context, private val listener: onClickI
         return boardData!!
     }
 
+    fun clearData() : Boolean {
+        (boardData as ArrayList).clear()
+        return true
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         var root : View ?= null
 
-        when(viewType){
-            BOARD -> {
+        root = LayoutInflater.from(parent.context).inflate(R.layout.board_item, parent, false)
+        return WriteViewHolder(root!!)
 
-                root = LayoutInflater.from(parent.context).inflate(R.layout.board_item, parent, false)
-                return WriteViewHolder(root!!)
-
-            }
-
-            REFRESH -> {
-
-                root = LayoutInflater.from(parent.context).inflate(R.layout.board_item, parent, false)
-                return RefreshViewHolder(root!!)
-
-            }
-
-            else -> {
-
-                root = LayoutInflater.from(parent.context).inflate(R.layout.board_item, parent, false)
-                return WrongViewHolder(root!!)
-
-            }
-        }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return boardData!![position].viewType!!
-    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val (title, contents, dateTime, userName, viewType) = boardData!![position]
+        val (title, contents, dateTime, userName) = boardData!![position]
 
         if(holder is WriteViewHolder){
             holder.title.text = title
@@ -102,7 +85,6 @@ class BoardAdapter(private val aContext: Context, private val listener: onClickI
 //            }
             holder.itemView.setOnClickListener { v: View? -> listener.onClickItemListener(position, boardData!![position]) }
             positionCheck = position
-        }else if(holder is RefreshViewHolder){
         }
 
     }
@@ -111,19 +93,10 @@ class BoardAdapter(private val aContext: Context, private val listener: onClickI
         return if (boardData != null) boardData!!.size else 0
     }
 
-    inner class WrongViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){ }
-
-    inner class RefreshViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { }
-
     inner class WriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.findViewById(R.id.titleText)
         val userName : TextView = itemView.findViewById(R.id.userNameText)
         val viewAnimation: ConstraintLayout = itemView.findViewById(R.id.viewAnimation)
     }
 
-    companion object {
-        const val REFRESH = 0
-        const val BOARD = 1
-
-    }
 }
